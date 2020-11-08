@@ -2,9 +2,7 @@ package com.sudzhaev.foodtracker.handler
 
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.Update
-import com.sudzhaev.foodtracker.framework.CommandRequest
-import com.sudzhaev.foodtracker.framework.MessageHandler
-import com.sudzhaev.foodtracker.framework.text
+import com.sudzhaev.foodtracker.framework.*
 import com.sudzhaev.foodtracker.id.IdOfChat
 import com.sudzhaev.foodtracker.service.FoodTrackQueryService
 import org.springframework.stereotype.Component
@@ -18,6 +16,7 @@ class GetSummaryHandler(private val foodTrackQueryService: FoodTrackQueryService
 
     override fun parseInput(chatId: IdOfChat, update: Update): Input {
         val lastDaysToGetSummary = update.text?.substringAfter("/summary ")?.toLongOrNull() ?: 5L
+        validate(lastDaysToGetSummary > 0) { "$PARSE_ERROR. Invalid days" }
         return Input(LocalDate.now().minusDays(lastDaysToGetSummary))
     }
 

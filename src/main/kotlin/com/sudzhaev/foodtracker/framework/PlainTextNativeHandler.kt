@@ -7,7 +7,7 @@ import com.github.kotlintelegrambot.entities.Update
 /**
  * Handles only plain text, not commands
  */
-class PlainTextNativeHandler(handler: HandleUpdate) : Handler(handler) {
+class PlainTextNativeHandler(handleUpdate: HandleUpdate) : Handler(handleUpdate) {
 
     override val groupIdentifier: String = "PlainTextHandler"
 
