@@ -7,7 +7,6 @@ import com.sudzhaev.foodtracker.id.IdOfChat
 import com.sudzhaev.foodtracker.service.FoodTrackQueryService
 import org.springframework.stereotype.Component
 import java.time.LocalDate
-import java.time.format.TextStyle
 import java.util.*
 
 @Component
@@ -15,28 +14,25 @@ class GetSummaryHandler(private val foodTrackQueryService: FoodTrackQueryService
     : MessageHandler<GetSummaryHandler.Input, GetSummaryHandler.Output>(CommandRequest("summary")) {
 
     override fun parseInput(chatId: IdOfChat, update: Update): Input {
-        val lastDaysToGetSummary = update.text?.substringAfter("/summary ")?.toLongOrNull() ?: 5L
+        val lastDaysToGetSummary = update.commandArgs("summary")?.toLongOrNull() ?: 5L
         validate(lastDaysToGetSummary > 0) { "$PARSE_ERROR. Invalid days" }
-        return Input(LocalDate.now().minusDays(lastDaysToGetSummary))
+        return Input(lastDaysToGetSummary)
     }
 
     override fun process(chatId: IdOfChat, input: Input): Output {
-        return Output(
-                foodTrackQueryService.listSummary(chatId, input.minDate)
-        )
+        val minDate = LocalDate.now().minusDays(input.lastNDays)
+        return Output(foodTrackQueryService.listSummaryForLastNDays(chatId, minDate))
     }
 
     override fun respond(chatId: IdOfChat, output: Output, bot: Bot) {
         val response = StringBuilder("Summary \uD83D\uDCCB\n")
-        output.dayToCaloriesMap.forEach { (day, calories) ->
-            val dayOfMonth = day.dayOfMonth
-            val month = day.month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
-            response.append("$month $dayOfMonth: $calories\n")
+        output.dayToCaloriesMap.forEach { (date, calories) ->
+            response.append("${date.asReadableString()}: $calories\n")
         }
-        bot.sendMessage(chatId.id, response.toString())
+        bot.sendMessage(chatId, response.toString())
     }
 
-    data class Input(val minDate: LocalDate)
+    data class Input(val lastNDays: Long)
 
     data class Output(val dayToCaloriesMap: SortedMap<LocalDate, Int>)
 }

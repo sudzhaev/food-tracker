@@ -34,11 +34,10 @@ abstract class MessageHandler<INPUT, OUTPUT>(val type: RequestType) {
             e.responseMessage
         } else {
             """Something went wrong :(
-                   Error code = ${MDC.get(TRACE_ID)}
-                   Please contact developer @sudzhaev (or better forward this message to him)
-                """.trimIndent()
+               Error code = ${MDC.get(TRACE_ID)}
+               Please contact developer @sudzhaev (or better forward this message to him)""".trimIndent()
         }
-        runCatching { bot.sendMessage(chatId.id, message) }
+        runCatching { bot.sendMessage(chatId, message) }
     }
 
     abstract fun parseInput(chatId: IdOfChat, update: Update): INPUT

@@ -10,13 +10,23 @@ import java.time.LocalDate
 @Component
 class FoodTrackQueryMapper(private val jdbcTemplate: NamedParameterJdbcTemplate) {
 
-    fun listFoodTracks(chatId: IdOfChat, minDate: LocalDate): List<FoodTrack> {
+    fun listFoodTracksByMinDate(chatId: IdOfChat, minDate: LocalDate): List<FoodTrack> {
         return jdbcTemplate.select("""
             SELECT name,
                    calories,
                    created_at createdAt
             FROM food_track
-            WHERE chat_id = :chatId AND created_at > :minDate
+            WHERE chat_id = :chatId AND created_at >= :minDate
         """, mapOf("chatId" to chatId.id, "minDate" to minDate.atStartOfDay()))
+    }
+
+    fun listFoodTracksByDate(chatId: IdOfChat, date: LocalDate): List<FoodTrack> {
+        return jdbcTemplate.select("""
+            SELECT name,
+                   calories,
+                   created_at createdAt
+            FROM food_track
+            WHERE chat_id = :chatId AND created_at::date = :date
+        """, mapOf("chatId" to chatId.id, "date" to date))
     }
 }

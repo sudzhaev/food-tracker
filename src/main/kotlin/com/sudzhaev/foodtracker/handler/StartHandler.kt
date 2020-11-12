@@ -4,6 +4,7 @@ import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.Update
 import com.sudzhaev.foodtracker.framework.CommandRequest
 import com.sudzhaev.foodtracker.framework.MessageHandler
+import com.sudzhaev.foodtracker.framework.sendMessage
 import com.sudzhaev.foodtracker.id.IdOfChat
 import org.springframework.stereotype.Component
 
@@ -26,6 +27,6 @@ class StartHandler : MessageHandler<Any?, String>(CommandRequest("start")) {
     }
 
     override fun respond(chatId: IdOfChat, output: String, bot: Bot) {
-        bot.sendMessage(chatId.id, output)
+        bot.sendMessage(chatId, output)
     }
 }
