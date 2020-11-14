@@ -9,6 +9,8 @@ interface FoodTrackQueryService {
 
     fun listSummaryForLastNDays(chatId: IdOfChat, minDate: LocalDate): SortedMap<LocalDate, Int>
 
+    fun listSummaryForDate(chatId: IdOfChat, date: LocalDate): SortedMap<LocalDate, Int>
+
     fun listStatisticsForLastNDays(chatId: IdOfChat, minDate: LocalDate): SortedMap<LocalDate, SortedSet<FoodTrackMin>>
 
     fun listStatisticsForDate(chatId: IdOfChat, date: LocalDate): SortedMap<LocalDate, SortedSet<FoodTrackMin>>

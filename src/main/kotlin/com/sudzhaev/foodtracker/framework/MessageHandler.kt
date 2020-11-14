@@ -13,6 +13,10 @@ const val PARSE_ERROR = "Cannot parse message"
 abstract class MessageHandler<INPUT, OUTPUT>(val type: RequestType) {
     protected val log = LoggerFactory.getLogger(this::class.java)!!
 
+    override fun toString(): String {
+        return "${this::class.simpleName!!}(${this.type})"
+    }
+
     open fun handle(bot: Bot, update: Update) {
         val chatId = IdOfChat(update.message?.chat?.id ?: return)
         MDC.put(TRACE_ID, UUID.randomUUID().toString())
@@ -36,7 +40,11 @@ abstract class MessageHandler<INPUT, OUTPUT>(val type: RequestType) {
                Error code = ${MDC.get(TRACE_ID)}
                Please contact developer @sudzhaev (or better forward this message to him)""".trimIndent()
         }
-        runCatching { bot.sendMessage(chatId, message) }
+        try {
+            bot.sendMessage(chatId, message)
+        } catch (e: Throwable) {
+            log.error("Error sending exception reason", e)
+        }
     }
 
     abstract fun parseInput(chatId: IdOfChat, update: Update): INPUT

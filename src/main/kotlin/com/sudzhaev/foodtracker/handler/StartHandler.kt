@@ -22,7 +22,8 @@ class StartHandler : MessageHandler<Any?, String>(CommandRequest("start")) {
             For example:
             - avocado 150
             - pizza pepperoni 700
-            To get statistics use /summary command
+            To get statistics use /summary and /stats commands
+            To get detailed reference use /help
             """.trimIndent()
     }
 

@@ -1,5 +1,6 @@
 package com.sudzhaev.foodtracker
 
+import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatcher.Dispatcher
 import com.github.kotlintelegrambot.types.DispatchableObject
@@ -7,11 +8,14 @@ import com.sudzhaev.foodtracker.framework.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.concurrent.BlockingQueue
+import java.util.concurrent.TimeUnit
 
-class Bot(private val basePackage: String) {
-    private val log = logger<Bot>()
+class BotEntryPoint(private val basePackage: String) {
+    private val log = logger<BotEntryPoint>()
 
     fun start() {
+        val startTime = System.currentTimeMillis()
+
         log.info("Starting bot")
         val ctx = AnnotationConfigApplicationContext(basePackage)
         log.info("Context initialized")
@@ -25,7 +29,9 @@ class Bot(private val basePackage: String) {
             dispatcher.apply(this)
         }
         startHealthCheckThread(queue)
-        log.info("Bot started")
+
+        val startupDuration = formatDuration(System.currentTimeMillis() - startTime)
+        log.info("Bot started in $startupDuration s.")
         bot.startPolling()
     }
 
@@ -42,9 +48,15 @@ class Bot(private val basePackage: String) {
         healthCheckThread.start()
     }
 
-    private fun com.github.kotlintelegrambot.Bot.Builder.setUpdatesQueue(queue: BlockingQueue<DispatchableObject>) {
+    private fun Bot.Builder.setUpdatesQueue(queue: BlockingQueue<DispatchableObject>) {
         val updatesQueueField = Dispatcher::class.java.getDeclaredField("updatesQueue")
         updatesQueueField.isAccessible = true
         updatesQueueField.set(this.updater.dispatcher, queue)
+    }
+
+    private fun formatDuration(durationMillis: Long): String {
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis)
+        val millis = durationMillis - TimeUnit.SECONDS.toMillis(seconds)
+        return "$seconds.$millis"
     }
 }

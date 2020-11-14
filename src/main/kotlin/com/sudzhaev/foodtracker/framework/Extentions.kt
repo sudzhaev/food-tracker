@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.time.format.TextStyle
 import java.util.*
@@ -61,9 +62,9 @@ fun Bot.sendMessage(
     )
 }
 
-fun String.toLocalDateOrNull(): LocalDate? {
+fun String.toLocalDateOrNull(formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE): LocalDate? {
     return try {
-        LocalDate.parse(this)
+        LocalDate.parse(this, formatter)
     } catch (e: DateTimeParseException) {
         null
     }

@@ -13,10 +13,15 @@ import kotlin.Comparator
 class FoodTrackQueryServiceImpl(private val foodTrackQueryMapper: FoodTrackQueryMapper) : FoodTrackQueryService {
 
     override fun listSummaryForLastNDays(chatId: IdOfChat, minDate: LocalDate): SortedMap<LocalDate, Int> {
-        return foodTrackQueryMapper.listFoodTracksByMinDate(chatId, minDate)
-                .groupBy { it.createdAt.toLocalDate() }
-                .mapValues { it.value.sumBy(FoodTrack::calories) }
-                .toSortedMap(Comparator.reverseOrder())
+        return buildSummary(
+                foodTrackQueryMapper.listFoodTracksByMinDate(chatId, minDate)
+        )
+    }
+
+    override fun listSummaryForDate(chatId: IdOfChat, date: LocalDate): SortedMap<LocalDate, Int> {
+        return buildSummary(
+                foodTrackQueryMapper.listFoodTracksByDate(chatId, date)
+        )
     }
 
     override fun listStatisticsForLastNDays(chatId: IdOfChat, minDate: LocalDate): SortedMap<LocalDate, SortedSet<FoodTrackMin>> {
@@ -29,6 +34,13 @@ class FoodTrackQueryServiceImpl(private val foodTrackQueryMapper: FoodTrackQuery
         return buildStatistics(
                 foodTrackQueryMapper.listFoodTracksByDate(chatId, date)
         )
+    }
+
+    private fun buildSummary(foodTracks: List<FoodTrack>): SortedMap<LocalDate, Int> {
+        return foodTracks
+                .groupBy { it.createdAt.toLocalDate() }
+                .mapValues { it.value.sumBy(FoodTrack::calories) }
+                .toSortedMap(Comparator.reverseOrder())
     }
 
     private fun buildStatistics(foodTracks: List<FoodTrack>): SortedMap<LocalDate, SortedSet<FoodTrackMin>> {

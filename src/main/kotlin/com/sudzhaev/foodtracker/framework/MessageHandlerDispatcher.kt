@@ -15,7 +15,7 @@ class MessageHandlerDispatcher(private val handlers: List<MessageHandler<*, *>>)
     fun apply(builder: Bot.Builder) {
         log.info("Initializing message dispatching")
         handlers.forEach {
-            log.info(it.loggable())
+            log.info(it.toString())
             builder.updater.dispatcher.addHandler(it.asNativeHandler())
         }
     }
@@ -29,9 +29,5 @@ class MessageHandlerDispatcher(private val handlers: List<MessageHandler<*, *>>)
 
     private fun MessageHandler<*, *>.asHandleUpdate(): HandleUpdate {
         return { bot, update -> handle(bot, update) }
-    }
-
-    private fun MessageHandler<*, *>.loggable(): String {
-        return "${this::class.simpleName!!}(${this.type})"
     }
 }
