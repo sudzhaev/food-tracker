@@ -6,7 +6,7 @@
 
     <groupId>com.sudzhaev</groupId>
     <artifactId>food-tracker</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
 
     <properties>
         <dockerfile-maven-version>1.4.13</dockerfile-maven-version>
@@ -92,7 +92,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.sudzhaev.foodtracker.FoodTrackerBotKt</mainClass>
+                                    <mainClass>com.sudzhaev.foodtracker.MainKt</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
