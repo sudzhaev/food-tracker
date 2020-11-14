@@ -11,18 +11,17 @@ private const val TRACE_ID = "traceId"
 const val PARSE_ERROR = "Cannot parse message"
 
 abstract class MessageHandler<INPUT, OUTPUT>(val type: RequestType) {
-
     protected val log = LoggerFactory.getLogger(this::class.java)!!
 
     open fun handle(bot: Bot, update: Update) {
         val chatId = IdOfChat(update.message?.chat?.id ?: return)
-        MDC.put(TRACE_ID, UUID.randomUUID().toString()) // TODO: fix MDC
+        MDC.put(TRACE_ID, UUID.randomUUID().toString())
         try {
             val input = parseInput(chatId, update)
             val output = process(chatId, input)
             respond(chatId, output, bot)
         } catch (e: Throwable) {
-            log.error("Error occurred", e)
+            log.error("Error occurred. $update", e)
             handleException(chatId, bot, e)
         } finally {
             MDC.clear()

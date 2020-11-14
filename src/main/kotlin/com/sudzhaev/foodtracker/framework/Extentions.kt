@@ -8,12 +8,18 @@ import com.github.kotlintelegrambot.entities.Update
 import com.github.kotlintelegrambot.network.Response
 import com.mapk.krowmapper.KRowMapper
 import com.sudzhaev.foodtracker.id.IdOfChat
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 import java.time.format.TextStyle
 import java.util.*
+
+inline fun <reified T> logger(): Logger {
+    return LoggerFactory.getLogger(T::class.java)!!
+}
 
 inline fun <reified T> ApplicationContext.listBeans(): List<T> {
     return getBeansOfType(T::class.java).values.toList()

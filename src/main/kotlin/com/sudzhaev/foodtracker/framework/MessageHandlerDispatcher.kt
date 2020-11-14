@@ -6,13 +6,18 @@ import com.github.kotlintelegrambot.dispatcher.handlers.CommandHandler
 import com.github.kotlintelegrambot.dispatcher.handlers.Handler
 
 class MessageHandlerDispatcher(private val handlers: List<MessageHandler<*, *>>) {
+    private val log = logger<MessageHandlerDispatcher>()
 
     init {
         require(handlers.isNotEmpty()) { "Bot has no handlers to dispatch" }
     }
 
     fun apply(builder: Bot.Builder) {
-        handlers.forEach { builder.updater.dispatcher.addHandler(it.asNativeHandler()) }
+        log.info("Initializing message dispatching")
+        handlers.forEach {
+            log.info(it.loggable())
+            builder.updater.dispatcher.addHandler(it.asNativeHandler())
+        }
     }
 
     private fun MessageHandler<*, *>.asNativeHandler(): Handler {
@@ -24,5 +29,9 @@ class MessageHandlerDispatcher(private val handlers: List<MessageHandler<*, *>>)
 
     private fun MessageHandler<*, *>.asHandleUpdate(): HandleUpdate {
         return { bot, update -> handle(bot, update) }
+    }
+
+    private fun MessageHandler<*, *>.loggable(): String {
+        return "${this::class.simpleName!!}(${this.type})"
     }
 }

@@ -14,9 +14,9 @@ class GetSummaryHandler(private val foodTrackQueryService: FoodTrackQueryService
     : MessageHandler<GetSummaryHandler.Input, GetSummaryHandler.Output>(CommandRequest("summary")) {
 
     override fun parseInput(chatId: IdOfChat, update: Update): Input {
-        val lastDaysToGetSummary = update.commandArgs("summary")?.toLongOrNull() ?: 5L
-        validate(lastDaysToGetSummary > 0) { "$PARSE_ERROR. Invalid days" }
-        return Input(lastDaysToGetSummary)
+        val lastNDays = update.commandArgs("summary")?.toLongOrNull() ?: 5L
+        validate(lastNDays > 0) { "$PARSE_ERROR. Invalid days" }
+        return Input(lastNDays)
     }
 
     override fun process(chatId: IdOfChat, input: Input): Output {
