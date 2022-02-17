@@ -1,4 +1,3 @@
--- TODO: setup migration tool like liquibase
 CREATE TABLE food_track
 (
 	id SERIAL NOT NULL
